@@ -145,9 +145,9 @@ export default function LoginPage() {
                 Remember me
               </Label>
             </div>
-            <div className="text-center text-sm text-slate-400">
+            <div className="text-center text-sm text-slate-500">
               Don't have an account?{" "}
-              <Button className="px-0" variant="link" asChild>
+              <Button className="px-0 underline" variant="link" asChild>
                 <Link
                   to={{
                     pathname: "/register",
