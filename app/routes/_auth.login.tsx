@@ -6,6 +6,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { useEffect, useRef } from "react";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
@@ -13,7 +14,25 @@ import { Label } from "~/components/ui/label";
 
 import { verifyLogin } from "~/models/user.server";
 import { createUserSession, getUserId } from "~/session.server";
-import { safeRedirect, validateEmail } from "~/utils";
+import { safeRedirect } from "~/utils";
+
+const loginSchema = z.object({
+  email: z
+    .string({
+      required_error: "Email is required",
+    })
+    .email("Email is invalid"),
+  password: z
+    .string({
+      required_error: "Password is required",
+    })
+    .min(8, "Password is too short"),
+  remember: z
+    .string()
+    .optional()
+    .transform((value) => value === "on"),
+  redirectTo: z.string().optional(),
+});
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserId(request);
@@ -23,32 +42,27 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
-  const remember = formData.get("remember");
+  const result = loginSchema.safeParse(Object.fromEntries(formData));
 
-  if (!validateEmail(email)) {
+  if (!result.success) {
+    const formattedErrors = result.error.format();
+
     return json(
-      { errors: { email: "Email is invalid", password: null } },
+      {
+        errors: {
+          email: formattedErrors.email?._errors[0],
+          password: formattedErrors.password?._errors[0],
+        },
+      },
       { status: 400 },
     );
   }
 
-  if (typeof password !== "string" || password.length === 0) {
-    return json(
-      { errors: { email: null, password: "Password is required" } },
-      { status: 400 },
-    );
-  }
+  const {
+    data: { email, password, remember },
+  } = result;
 
-  if (password.length < 8) {
-    return json(
-      { errors: { email: null, password: "Password is too short" } },
-      { status: 400 },
-    );
-  }
-
+  const redirectTo = safeRedirect(result.data.redirectTo, "/");
   const user = await verifyLogin(email, password);
 
   if (!user) {
@@ -60,7 +74,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   return createUserSession({
     redirectTo,
-    remember: remember === "on" ? true : false,
+    remember,
     request,
     userId: user.id,
   });
@@ -70,7 +84,7 @@ export const meta: MetaFunction = () => [{ title: "Login" }];
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/notes";
+  const redirectTo = searchParams.get("redirectTo") || "/records";
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -86,7 +100,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
-        <h1 className="text-3xl text-center font-bold mb-8">Dental Records</h1>
+        <h1 className="mb-8 text-center text-3xl font-bold">Dental Records</h1>
 
         <Form method="post" className="space-y-6">
           <div>
@@ -104,7 +118,7 @@ export default function LoginPage() {
                 aria-describedby="email-error"
               />
               {actionData?.errors?.email ? (
-                <div className="pt-1 text-red-700" id="email-error">
+                <div className="pt-1 text-sm text-red-700" id="email-error">
                   {actionData.errors.email}
                 </div>
               ) : null}
@@ -124,7 +138,7 @@ export default function LoginPage() {
                 aria-describedby="password-error"
               />
               {actionData?.errors?.password ? (
-                <div className="pt-1 text-red-700" id="password-error">
+                <div className="pt-1 text-sm text-red-700" id="password-error">
                   {actionData.errors.password}
                 </div>
               ) : null}
