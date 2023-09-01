@@ -1,5 +1,5 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
 import type { LucideProps } from "lucide-react";
 import {
@@ -16,7 +16,7 @@ import NavbarLink from "~/components/navbar-link";
 import { Button } from "~/components/ui/button";
 import { userPrefs } from "~/cookies.server";
 import { cn } from "~/lib/utils";
-import { getUser } from "~/session.server";
+import { requireUser } from "~/session.server";
 
 const navLinks: Array<{
   to: string;
@@ -51,11 +51,7 @@ const navLinks: Array<{
 ];
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const user = await getUser(request);
-
-  if (!user) {
-    return redirect("/login");
-  }
+  const user = await requireUser(request);
 
   const cookieHeader = request.headers.get("Cookie");
   const cookie = await userPrefs.parse(cookieHeader);
@@ -84,7 +80,7 @@ export default function RecordsPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <main className="flex flex-1">
+      <main className="flex h-full flex-1">
         <aside
           className={cn(
             "flex flex-col border-r border-r-slate-200 p-4",
@@ -152,9 +148,7 @@ export default function RecordsPage() {
             </div>
           )}
         </aside>
-        <div className="flex-1">
-          <Outlet />
-        </div>
+        <Outlet />
       </main>
     </div>
   );
