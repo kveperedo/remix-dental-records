@@ -20,6 +20,12 @@ import {
 } from "lucide-react";
 import NavbarLink from "~/components/navbar-link";
 import { Button } from "~/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { userPrefs } from "~/cookies.server";
 import { cn } from "~/lib/utils";
 import { requireUser } from "~/session.server";
@@ -94,19 +100,28 @@ export default function RecordsPage() {
                 method="post"
                 replace
               >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  type="submit"
-                  name="isSidebarOpen"
-                  value={isSidebarOpen ? "false" : "true"}
-                >
-                  {isSidebarOpen ? (
-                    <ArrowLeftToLine size={20} />
-                  ) : (
-                    <ArrowRightToLine size={20} />
-                  )}
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        type="submit"
+                        name="isSidebarOpen"
+                        value={isSidebarOpen ? "false" : "true"}
+                      >
+                        {isSidebarOpen ? (
+                          <ArrowLeftToLine size={20} />
+                        ) : (
+                          <ArrowRightToLine size={20} />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      {isSidebarOpen ? "Collapse" : "Expand"}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </sidebarFetcher.Form>
             </div>
 
