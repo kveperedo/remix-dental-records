@@ -70,3 +70,9 @@ export async function getRecordById(id: string) {
 
   return record;
 }
+
+export async function createRecord(record: Omit<RecordType, "id">) {
+  return prisma.record.create({
+    data: record,
+  });
+}

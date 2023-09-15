@@ -1,6 +1,11 @@
 import { json } from "@remix-run/node";
 import type { V2_MetaFunction, LoaderArgs } from "@remix-run/node";
-import { Form, useLoaderData, useSearchParams } from "@remix-run/react";
+import {
+  Form,
+  useLoaderData,
+  useRouteError,
+  useSearchParams,
+} from "@remix-run/react";
 import { Search } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -9,6 +14,7 @@ import { getRecordPageCount, getRecords } from "~/models/record.server";
 import { columns } from "./columns";
 import { DataTable } from "~/components/ui/data-table/table";
 import type { SortingState } from "@tanstack/react-table";
+import NewRecordDialog from "./new-record-dialog";
 
 const DEFAULT_PAGE = "1";
 
@@ -50,24 +56,37 @@ export default function MainIndexPage() {
 
   return (
     <div className="flex h-full flex-1 flex-col gap-4 p-4">
-      <Form className="flex items-center gap-2" method="get">
-        <Input
-          defaultValue={searchTerm}
-          autoComplete="off"
-          name="search"
-          type="search"
-          placeholder="Search records..."
-        />
-        <input
-          type="hidden"
-          name="sort"
-          value={searchParams.get("sort") ?? ""}
-        />
-        <Button className="gap-2" type="submit">
-          <Search size="20" />
-          <span>Search</span>
-        </Button>
-      </Form>
+      <div className="flex items-center justify-between gap-4">
+        <Form
+          className="flex flex-1 items-center gap-2 sm:flex-none"
+          method="get"
+        >
+          <input
+            type="hidden"
+            name="sort"
+            value={searchParams.get("sort") ?? ""}
+          />
+          <Input
+            className="w-full sm:w-56"
+            defaultValue={searchTerm}
+            autoComplete="off"
+            name="search"
+            type="search"
+            placeholder="Search records..."
+          />
+
+          <Button
+            variant="outline"
+            className="hidden gap-2 sm:flex"
+            type="submit"
+          >
+            <Search size="20" />
+            <span>Search</span>
+          </Button>
+        </Form>
+
+        <NewRecordDialog />
+      </div>
 
       <DataTable
         className="overflow-hidden"
@@ -103,6 +122,10 @@ export default function MainIndexPage() {
 }
 
 export function ErrorBoundary() {
+  const error = useRouteError();
+
+  console.log(error);
+
   return (
     <div className="flex h-full w-full">
       <h1 className="m-auto text-lg font-semibold">

@@ -1,6 +1,12 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  Outlet,
+  useFetcher,
+  useLoaderData,
+} from "@remix-run/react";
 import type { LucideProps } from "lucide-react";
 import {
   ArrowLeftToLine,
@@ -59,24 +65,9 @@ export const loader = async ({ request }: LoaderArgs) => {
   return json({ user, isSidebarOpen: cookie?.isSidebarOpen ?? false });
 };
 
-export const action = async ({ request }: ActionArgs) => {
-  const cookieHeader = request.headers.get("Cookie");
-
-  const cookie = (await userPrefs.parse(cookieHeader)) ?? {};
-  const formData = await request.formData();
-
-  const isSidebarOpen = formData.get("isSidebarOpen") === "true";
-  cookie.isSidebarOpen = isSidebarOpen;
-
-  return json(isSidebarOpen, {
-    headers: {
-      "Set-Cookie": await userPrefs.serialize(cookie),
-    },
-  });
-};
-
 export default function RecordsPage() {
   const { user, isSidebarOpen } = useLoaderData<typeof loader>();
+  const sidebarFetcher = useFetcher();
 
   return (
     <div className="flex h-full flex-col">
@@ -97,7 +88,12 @@ export default function RecordsPage() {
                   Dental Records
                 </Link>
               )}
-              <Form className={isSidebarOpen ? "ml-auto" : "m-0"} method="post">
+              <sidebarFetcher.Form
+                className={isSidebarOpen ? "ml-auto" : "m-0"}
+                action="/toggle-sidebar"
+                method="post"
+                replace
+              >
                 <Button
                   variant="ghost"
                   size="icon"
@@ -105,9 +101,13 @@ export default function RecordsPage() {
                   name="isSidebarOpen"
                   value={isSidebarOpen ? "false" : "true"}
                 >
-                  {isSidebarOpen ? <ArrowLeftToLine /> : <ArrowRightToLine />}
+                  {isSidebarOpen ? (
+                    <ArrowLeftToLine size={20} />
+                  ) : (
+                    <ArrowRightToLine size={20} />
+                  )}
                 </Button>
-              </Form>
+              </sidebarFetcher.Form>
             </div>
 
             <div className="w-full border-t border-slate-100" />
@@ -141,7 +141,7 @@ export default function RecordsPage() {
                   size={isSidebarOpen ? "default" : "icon"}
                   type="submit"
                 >
-                  <LogOut />
+                  <LogOut size={20} />
                   {isSidebarOpen && <span>Logout</span>}
                 </Button>
               </Form>

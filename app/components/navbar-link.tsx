@@ -19,6 +19,7 @@ type NavbarLinkProps = {
 const NavbarButton = ({ to, label, Icon, isSidebarOpen }: NavbarLinkProps) => {
   return (
     <RemixNavLink
+      prefetch="intent"
       to={to}
       className={({ isActive }) =>
         cn(
