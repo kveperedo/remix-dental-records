@@ -76,3 +76,10 @@ export async function createRecord(record: Omit<RecordType, "id">) {
     data: record,
   });
 }
+
+export async function updateRecord(record: RecordType) {
+  return prisma.record.update({
+    where: { id: record.id },
+    data: record,
+  });
+}

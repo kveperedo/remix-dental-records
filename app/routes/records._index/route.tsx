@@ -14,7 +14,7 @@ import { getRecordPageCount, getRecords } from "~/models/record.server";
 import { columns } from "./columns";
 import { DataTable } from "~/components/ui/data-table/table";
 import type { SortingState } from "@tanstack/react-table";
-import NewRecordDialog from "./new-record-dialog";
+import RecordDialog from "../../components/record-dialog";
 
 const DEFAULT_PAGE = "1";
 
@@ -30,12 +30,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     getRecordPageCount({ searchTerm }),
   ]);
 
-  return json(
-    { records: { data, pageCount }, searchTerm },
-    {
-      headers: { "Cache-Control": "max-age=60, stale-while-revalidate=60" },
-    },
-  );
+  return json({ records: { data, pageCount }, searchTerm });
 };
 
 export const meta: V2_MetaFunction = () => [
@@ -85,7 +80,7 @@ export default function MainIndexPage() {
           </Button>
         </Form>
 
-        <NewRecordDialog />
+        <RecordDialog />
       </div>
 
       <DataTable

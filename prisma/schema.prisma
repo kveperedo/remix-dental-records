@@ -53,9 +53,9 @@ enum MaritalStatus {
 model Record {
   id         String        @id @default(cuid())
   name       String
-  address    String?
-  telephone  String?
-  occupation String?
+  address    String
+  telephone  String
+  occupation String
   gender     Gender
   status     MaritalStatus
   birthDate  DateTime

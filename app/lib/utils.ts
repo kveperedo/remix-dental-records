@@ -20,3 +20,7 @@ export async function withDelay<T>(
     return Promise.reject(result.reason);
   }
 }
+
+export function capitalize(str: string) {
+  return str[0].toUpperCase() + str.slice(1);
+}

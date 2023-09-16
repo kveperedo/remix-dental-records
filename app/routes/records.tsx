@@ -84,7 +84,7 @@ export default function RecordsPage() {
             isSidebarOpen && "w-64",
           )}
         >
-          <div className="mb-4 flex flex-col items-center gap-4">
+          <div className="mb-4 flex flex-col items-center">
             <div className="flex w-full items-center justify-between">
               {isSidebarOpen && (
                 <Link
@@ -124,8 +124,6 @@ export default function RecordsPage() {
                 </TooltipProvider>
               </sidebarFetcher.Form>
             </div>
-
-            <div className="w-full border-t border-slate-100" />
           </div>
 
           <div className="flex flex-col gap-2">

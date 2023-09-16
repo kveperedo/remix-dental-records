@@ -31,7 +31,7 @@ export const recordSchema = z.object({
   occupation: z.string().nonempty("Occupation is required"),
 });
 
-export type RecordSchema = z.infer<typeof recordSchema>;
+type RecordInput = z.input<typeof recordSchema>;
 
 const MARITAL_STATUS_OPTIONS: {
   label: string;
@@ -60,7 +60,7 @@ const MARITAL_STATUS_OPTIONS: {
 ];
 
 type RecordFormProps = {
-  formMethods: ReturnType<typeof useRemixForm<RecordSchema>>;
+  formMethods: ReturnType<typeof useRemixForm<RecordInput>>;
 };
 
 const RecordForm = ({ formMethods }: RecordFormProps) => {
