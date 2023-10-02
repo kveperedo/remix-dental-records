@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import type { V2_MetaFunction, LoaderArgs } from "@remix-run/node";
+import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Form,
   useLoaderData,
@@ -18,7 +18,7 @@ import RecordDialog from "../../components/record-dialog";
 
 const DEFAULT_PAGE = "1";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
 
   const page = url.searchParams.get("page") ?? DEFAULT_PAGE;
@@ -33,7 +33,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return json({ records: { data, pageCount }, searchTerm });
 };
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   {
     title: "Records",
     description: "View and manage patient records",

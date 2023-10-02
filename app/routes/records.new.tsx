@@ -1,14 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect, type ActionArgs, json } from "@remix-run/node";
+import { redirect, type ActionFunctionArgs, json } from "@remix-run/node";
 import { getValidatedFormData } from "remix-hook-form";
-import type { RecordSchema } from "~/components/record-form";
+import type { z } from "zod";
 import { recordSchema } from "~/components/record-form";
 import { withDelay } from "~/lib/utils";
 import { createRecord } from "~/models/record.server";
 
 const resolver = zodResolver(recordSchema);
+type RecordSchema = z.infer<typeof recordSchema>;
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const {
     errors,
     data,

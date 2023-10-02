@@ -1,6 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { Response, json } from "@remix-run/node";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   Link,
   isRouteErrorResponse,
@@ -27,7 +31,7 @@ import { getRecordById, updateRecord } from "~/models/record.server";
 const resolver = zodResolver(recordSchema);
 type RecordSchema = z.infer<typeof recordSchema>;
 
-export const action = async ({ params, request }: ActionArgs) => {
+export const action = async ({ params, request }: ActionFunctionArgs) => {
   const { recordId } = params;
 
   if (!recordId) {
@@ -49,7 +53,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   return json({});
 };
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const recordId = params.recordId;
 
   if (!recordId) {
@@ -65,7 +69,7 @@ export const loader = async ({ params }: LoaderArgs) => {
   return json({ record });
 };
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => [
+export const meta: MetaFunction<typeof loader> = ({ data }) => [
   { title: `Records | ${data?.record.name}` },
 ];
 

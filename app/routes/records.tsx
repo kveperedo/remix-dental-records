@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   Form,
@@ -62,7 +62,7 @@ const navLinks: Array<{
   },
 ];
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
 
   const cookieHeader = request.headers.get("Cookie");
@@ -98,7 +98,6 @@ export default function RecordsPage() {
                 className={isSidebarOpen ? "ml-auto" : "m-0"}
                 action="/toggle-sidebar"
                 method="post"
-                replace
               >
                 <TooltipProvider>
                   <Tooltip>
