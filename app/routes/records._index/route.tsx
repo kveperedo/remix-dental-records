@@ -9,12 +9,12 @@ import {
 import { Search } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import Pagination from "~/components/ui/pagination";
 import { getRecordPageCount, getRecords } from "~/models/record.server";
 import { columns } from "./columns";
 import { DataTable } from "~/components/ui/data-table/table";
 import type { SortingState } from "@tanstack/react-table";
 import RecordDialog from "../../components/record-dialog";
+import DataTablePagination from "~/components/data-table-pagination";
 
 const DEFAULT_PAGE = "1";
 
@@ -46,7 +46,6 @@ export default function MainIndexPage() {
     searchTerm,
   } = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get("page") ?? DEFAULT_PAGE);
   const sort: SortingState = JSON.parse(searchParams.get("sort") || "[]");
 
   return (
@@ -99,17 +98,7 @@ export default function MainIndexPage() {
 
       {pageCount > 0 && (
         <div className="mt-auto">
-          <Pagination
-            key={searchTerm + page}
-            total={pageCount}
-            initialPage={page}
-            onChange={(page) =>
-              setSearchParams((setter) => {
-                setter.set("page", page.toString());
-                return setter;
-              })
-            }
-          />
+          <DataTablePagination pageCount={pageCount} />
         </div>
       )}
     </div>

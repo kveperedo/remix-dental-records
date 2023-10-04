@@ -4,14 +4,14 @@ import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
 type PaginationProps = {
   total: number;
-  initialPage?: number;
+  page: number;
   onChange?: (page: number) => void;
 };
 
-const Pagination = ({ total, initialPage, onChange }: PaginationProps) => {
+const Pagination = ({ total, page, onChange }: PaginationProps) => {
   const { range, active, next, previous, setPage } = usePaginationState({
     total,
-    initialPage,
+    page,
     onChange,
   });
 

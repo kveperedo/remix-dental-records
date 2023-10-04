@@ -1,6 +1,6 @@
 // Reference: https://github.com/mantinedev/mantine/blob/master/src/mantine-hooks/src/use-pagination/use-pagination.ts
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export const DOTS = "dots";
 
@@ -10,8 +10,8 @@ const range = (start: number, end: number) => {
 };
 
 export type PaginationParams = {
-  /** Page selected on initial render, defaults to 1 */
-  initialPage?: number;
+  /** Selected page */
+  page: number;
 
   /** Total amount of pages */
   total: number;
@@ -30,11 +30,10 @@ export const usePaginationState = ({
   total,
   siblings = 1,
   boundaries = 1,
-  initialPage = 1,
+  page,
   onChange,
 }: PaginationParams) => {
   const _total = Math.max(Math.trunc(total), 0);
-  const [activePage, setActivePage] = useState(initialPage);
 
   const setPage = (pageNumber: number) => {
     let pageNumberToSet = pageNumber;
@@ -45,12 +44,11 @@ export const usePaginationState = ({
       pageNumberToSet = _total;
     }
 
-    setActivePage(pageNumberToSet);
     onChange?.(pageNumberToSet);
   };
 
-  const next = () => setPage(activePage + 1);
-  const previous = () => setPage(activePage - 1);
+  const next = () => setPage(page + 1);
+  const previous = () => setPage(page - 1);
   const first = () => setPage(1);
   const last = () => setPage(_total);
 
@@ -60,11 +58,8 @@ export const usePaginationState = ({
       return range(1, _total);
     }
 
-    const leftSiblingIndex = Math.max(activePage - siblings, boundaries);
-    const rightSiblingIndex = Math.min(
-      activePage + siblings,
-      _total - boundaries,
-    );
+    const leftSiblingIndex = Math.max(page - siblings, boundaries);
+    const rightSiblingIndex = Math.min(page + siblings, _total - boundaries);
 
     const shouldShowLeftDots = leftSiblingIndex > boundaries + 2;
     const shouldShowRightDots = rightSiblingIndex < _total - (boundaries + 1);
@@ -94,11 +89,11 @@ export const usePaginationState = ({
       DOTS,
       ...range(_total - boundaries + 1, _total),
     ];
-  }, [siblings, boundaries, _total, activePage]);
+  }, [siblings, boundaries, _total, page]);
 
   return {
     range: paginationRange,
-    active: activePage,
+    active: page,
     setPage,
     next,
     previous,
