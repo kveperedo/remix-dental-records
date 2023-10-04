@@ -85,20 +85,8 @@ export default function RecordsPage() {
           )}
         >
           <div className="mb-4 flex flex-col items-center">
-            <div className="flex w-full items-center justify-between">
-              {isSidebarOpen && (
-                <Link
-                  className="flex items-center gap-1 text-xl font-semibold"
-                  to="."
-                >
-                  Dental Records
-                </Link>
-              )}
-              <sidebarFetcher.Form
-                className={isSidebarOpen ? "ml-auto" : "m-0"}
-                action="/toggle-sidebar"
-                method="post"
-              >
+            <div className="flex w-full items-center gap-2">
+              <sidebarFetcher.Form action="/toggle-sidebar" method="post">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -122,6 +110,14 @@ export default function RecordsPage() {
                   </Tooltip>
                 </TooltipProvider>
               </sidebarFetcher.Form>
+              {isSidebarOpen && (
+                <Link
+                  className="flex items-center gap-1 text-xl font-semibold"
+                  to="."
+                >
+                  Dental Records
+                </Link>
+              )}
             </div>
           </div>
 
@@ -148,8 +144,11 @@ export default function RecordsPage() {
               )}
               <Form className="w-full" action="/logout" method="post">
                 <Button
-                  className={cn("gap-4", isSidebarOpen ? "w-full" : "w-10")}
-                  variant="secondary"
+                  className={cn(
+                    "gap-4 hover:border-destructive hover:bg-destructive hover:text-destructive-foreground",
+                    isSidebarOpen ? "w-full " : "w-10",
+                  )}
+                  variant={isSidebarOpen ? "outline" : "ghost"}
                   size={isSidebarOpen ? "default" : "icon"}
                   type="submit"
                 >
