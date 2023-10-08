@@ -3,15 +3,24 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+const cleanupDatabase = async () => {
+  await prisma.record.deleteMany();
+  await prisma.transaction.deleteMany();
+  await prisma.note.deleteMany();
+  await prisma.user.deleteMany();
+};
+
 async function seed() {
-  const email = "rachel@remix.run";
+  const email = "test@gmail.com";
+
+  await cleanupDatabase();
 
   // cleanup the existing database
   await prisma.user.delete({ where: { email } }).catch(() => {
     // no worries if it doesn't exist yet
   });
 
-  const hashedPassword = await bcrypt.hash("racheliscool", 10);
+  const hashedPassword = await bcrypt.hash("sample123", 10);
 
   const user = await prisma.user.create({
     data: {
@@ -37,6 +46,18 @@ async function seed() {
       title: "My second note",
       body: "Hello, world!",
       userId: user.id,
+    },
+  });
+
+  const record = await prisma.record.create({
+    data: {
+      name: "Aaron Nabors",
+      gender: "female",
+      status: "single",
+      address: "123 Oak St",
+      occupation: "Web Developer",
+      telephone: "555-555-5555",
+      birthDate: new Date("1984-10-12"),
     },
   });
 
@@ -176,6 +197,74 @@ async function seed() {
         occupation: "Frontend Developer",
         telephone: "555-555-5555",
         birthDate: new Date("1994-04-07"),
+      },
+    ],
+  });
+
+  await prisma.transaction.createMany({
+    data: [
+      {
+        date: new Date("2023-10-03"),
+        tooth: "Wisdom",
+        description: "Wisdom tooth extraction",
+        amount: 1200.5,
+        recordId: record.id,
+      },
+      {
+        date: new Date("2023-05-21"),
+        tooth: "Molar",
+        description: "Molar tooth extraction",
+        amount: 1500.75,
+        recordId: record.id,
+      },
+      {
+        date: new Date("2023-01-22"),
+        tooth: "Canine",
+        description: "Canine tooth extraction",
+        amount: 800.25,
+        recordId: record.id,
+      },
+      {
+        date: new Date("2023-09-15"),
+        tooth: "Premolar",
+        description: "Premolar tooth extraction",
+        amount: 1000.0,
+        recordId: record.id,
+      },
+      {
+        date: new Date("2023-07-07"),
+        tooth: "Incisor",
+        description: "Incisor tooth extraction",
+        amount: 950.0,
+        recordId: record.id,
+      },
+      {
+        date: new Date("2023-12-01"),
+        tooth: "Wisdom",
+        description: "Wisdom tooth extraction",
+        amount: 1300.0,
+        recordId: record.id,
+      },
+      {
+        date: new Date("2023-11-11"),
+        tooth: "Molar",
+        description: "Molar tooth extraction",
+        amount: 1400.0,
+        recordId: record.id,
+      },
+      {
+        date: new Date("2023-06-30"),
+        tooth: "Canine",
+        description: "Canine tooth extraction",
+        amount: 900.0,
+        recordId: record.id,
+      },
+      {
+        date: new Date("2023-08-22"),
+        tooth: "Premolar",
+        description: "Premolar tooth extraction",
+        amount: 1100.0,
+        recordId: record.id,
       },
     ],
   });

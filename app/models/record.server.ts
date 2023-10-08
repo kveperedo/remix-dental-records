@@ -1,8 +1,7 @@
 import { prisma } from "~/db.server";
 import type { Record as RecordType } from "@prisma/client";
 import type { SortingState } from "@tanstack/react-table";
-
-export const RECORDS_PER_PAGE = 15;
+import { ITEMS_PER_PAGE } from "~/constants.server";
 
 type GetRecordsParams = {
   page: number;
@@ -34,8 +33,8 @@ export async function getRecords({
       : DEFAULT_ORDER_BY;
 
   const records = await prisma.record.findMany({
-    skip: (page - 1) * RECORDS_PER_PAGE,
-    take: RECORDS_PER_PAGE,
+    skip: (page - 1) * ITEMS_PER_PAGE,
+    take: ITEMS_PER_PAGE,
     orderBy,
     where: {
       name: {
@@ -60,7 +59,7 @@ export async function getRecordPageCount({
     where: { name: { contains: searchTerm, mode: "insensitive" } },
   });
 
-  return Math.ceil(count / RECORDS_PER_PAGE);
+  return Math.ceil(count / ITEMS_PER_PAGE);
 }
 
 export async function getRecordById(id: string) {

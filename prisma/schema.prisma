@@ -59,4 +59,19 @@ model Record {
   gender     Gender
   status     MaritalStatus
   birthDate  DateTime
+
+  Transactions Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  date        DateTime
+  tooth       String
+  description String
+  amount      Float
+
+  Record   Record? @relation(fields: [recordId], references: [id])
+  recordId String?
 }
