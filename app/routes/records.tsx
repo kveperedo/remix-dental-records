@@ -144,6 +144,7 @@ export default function RecordsPage() {
               )}
               <Form className="w-full" action="/logout" method="post">
                 <Button
+                  data-testid="logout-button"
                   className={cn(
                     "gap-4 hover:border-destructive hover:bg-destructive hover:text-destructive-foreground",
                     isSidebarOpen ? "w-full " : "w-10",
