@@ -1,7 +1,6 @@
 import { json } from "@remix-run/node";
 import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
-  Form,
   useLoaderData,
   useRouteError,
   useSearchParams,
@@ -30,7 +29,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     getRecordPageCount({ searchTerm }),
   ]);
 
-  return json({ records: { data, pageCount }, searchTerm });
+  return json({ records: { data, pageCount } });
 };
 
 export const meta: MetaFunction = () => [
@@ -43,23 +42,29 @@ export const meta: MetaFunction = () => [
 export default function MainIndexPage() {
   const {
     records: { data, pageCount },
-    searchTerm,
   } = useLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
   const sort: SortingState = JSON.parse(searchParams.get("sort") || "[]");
+  const searchTerm = searchParams.get("search") ?? "";
+
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    setSearchParams((setter) => {
+      setter.set("search", formData.get("search") as string);
+      return setter;
+    });
+  };
 
   return (
     <div className="flex h-full flex-1 flex-col gap-4 p-4">
       <div className="flex items-center justify-between gap-4">
-        <Form
+        <form
           className="flex flex-1 items-center gap-2 sm:flex-none"
-          method="get"
+          onSubmit={handleSearchSubmit}
         >
-          <input
-            type="hidden"
-            name="sort"
-            value={searchParams.get("sort") ?? ""}
-          />
           <Input
             className="w-full sm:w-56"
             defaultValue={searchTerm}
@@ -77,7 +82,7 @@ export default function MainIndexPage() {
             <Search size="20" />
             <span>Search</span>
           </Button>
-        </Form>
+        </form>
 
         <RecordDialog />
       </div>
@@ -96,7 +101,7 @@ export default function MainIndexPage() {
         }}
       />
 
-      {pageCount > 0 && (
+      {pageCount > 1 && (
         <div className="mt-auto">
           <DataTablePagination pageCount={pageCount} />
         </div>
