@@ -18,10 +18,6 @@ const DataTablePagination = ({ pageCount }: DataTablePaginationProps) => {
     });
   };
 
-  if (pageCount === 1) {
-    return null;
-  }
-
   return (
     <Pagination total={pageCount} page={page} onChange={handlePageChange} />
   );

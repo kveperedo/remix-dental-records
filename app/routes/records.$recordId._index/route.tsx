@@ -42,7 +42,7 @@ export default function RecordIndexPage() {
   return (
     <>
       <DataTable className="overflow-hidden" columns={columns} data={data} />
-      {pageCount > 0 && (
+      {pageCount > 1 && (
         <div className="mt-auto">
           <DataTablePagination pageCount={pageCount} />
         </div>
