@@ -90,7 +90,10 @@ const RecordDialog = ({ defaultValues }: RecordDialogProps) => {
     <>
       <Dialog open={showDialog} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <Button className="gap-4">
+          <Button
+            variant={isEditMode ? "secondary" : "default"}
+            className="gap-4"
+          >
             {isEditMode ? <Pencil size={20} /> : <Plus size={20} />}
             <span className="hidden sm:inline">{actionText}</span>
           </Button>
